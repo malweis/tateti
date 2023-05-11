@@ -1,6 +1,10 @@
 // Se setean las variablese globales de jugador activo, bandera de si el juego sigue activo y el estado actual del juego
-let currentPlayer = "X";
-let gameActive = true;
+let currentPlayer = "";
+let gameActive = false;
+let playerXName = "";
+let playerOName = "";
+
+
 let gameState = ["", "", "", "", "", "", "", "", ""];
 //Se setean las condiciones de victoria 
 const winningConditions = [
@@ -13,21 +17,48 @@ const winningConditions = [
   [0, 4, 8],
   [2, 4, 6]
 ];
+
+const startGame = () => {
+    playerXName = document.getElementById("playerX").value;
+    playerOName = document.getElementById("playerO").value;
+  
+    if (playerXName.trim() === "" || playerOName.trim() === "") {
+      alert("Ingrese ambos nombres antes de comenzar.");
+      return;
+    }
+  
+    currentPlayer = prompt("Cual jugador comienza con la X? X o O").toUpperCase();
+    if (currentPlayer !== "X" && currentPlayer !== "O") {
+      alert("Ingrese  que jugador es primero");
+      return;
+    }
+  
+    gameActive = true;
+    resetBoard();
+  };
+
 //Cell index viene del html como un parametro
 const ponerMarca = (cellIndex) => {
     //se comprueba que el juego aun no haya terminado o  que no haya ya un valor dentro de la celda
   if (!gameActive || gameState[cellIndex] !== "") return;
 
+  playerXName = document.getElementById("playerX").value;
+  playerOName = document.getElementById("playerO").value;
   //Se coloca al nombre del jugador actual en la posicion del array correspondiente a la celda clickeada
   gameState[cellIndex] = currentPlayer;
   //Se coloca el nombre del jugador en la celda clickeada
   document.getElementsByClassName("cell")[cellIndex].innerText = currentPlayer;
 
-  //Llama a la funcion para comprobar alguien gano el juego, de ser asi se imprime un mensaje y coloca el estado del juego en inactivo
+ 
+
+  //Condicional que cambia al jugador cada vez que se coloca una marca , si es x pasa a o si no pasa a x
+  currentPlayer = currentPlayer === "X" ? "O" : "X";
+    currentPlayerName = currentPlayer === "X" ? playerXName : playerOName;
+     //Llama a la funcion para comprobar alguien gano el juego, de ser asi se imprime un mensaje y coloca el estado del juego en inactivo
   if (checkWin()) {
     
     gameActive = false;
-    alert("Jugador " + currentPlayer + " Gana!");
+    alert("Jugador " + currentPlayerName + " Gana!");
     return;
   }
 //Llama a la funcion para comprobar un empate, de ser asi se imprime un mensaje y coloca el estado del juego en inactivo
@@ -37,9 +68,6 @@ const ponerMarca = (cellIndex) => {
 
     return;
   }
-
-  //Condicional que cambia al jugador cada vez que se coloca una marca , si es x pasa a o si no pasa a x
-  currentPlayer = currentPlayer === "X" ? "O" : "X";
 };
 //Funcion a la que se llama cada vez que se coloca una marca para comprobar si un jugador gano
 const checkWin = () => {
@@ -58,19 +86,27 @@ const checkWin = () => {
   }
   return false;
 };
+
+// ...
+
+  
 //Si el estado del juego no incluye ninguna cadena vacia se concluye empate
 const checkTie = () => {
   return !gameState.includes("");
 };
 //Se deja al tablero en su estado incial, reiniciando tambien las marcas colocadas
 const resetBoard = () => {
-  currentPlayer = "X";
-  gameActive = true;
-  gameState = ["", "", "", "", "", "", "", "", ""];
-
-  const cells = document.getElementsByClassName("cell");
-  for (let i = 0; i < cells.length; i++) {
-    cells[i].innerText = "";
-  }
-};
+    playerXName = "";
+    playerOName = "";
+  
+    currentPlayer = "X";
+    gameActive = true;
+    gameState = ["", "", "", "", "", "", "", "", ""];
+  
+    const cells = document.getElementsByClassName("cell");
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].innerText = "";
+    }
+  };
+  
 
