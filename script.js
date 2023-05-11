@@ -25,14 +25,16 @@ const ponerMarca = (cellIndex) => {
 
   //Llama a la funcion para comprobar alguien gano el juego, de ser asi se imprime un mensaje y coloca el estado del juego en inactivo
   if (checkWin()) {
-    alert("Jugador " + currentPlayer + " Gana!");
+    
     gameActive = false;
+    alert("Jugador " + currentPlayer + " Gana!");
     return;
   }
 //Llama a la funcion para comprobar un empate, de ser asi se imprime un mensaje y coloca el estado del juego en inactivo
   if (checkTie()) {
-    alert("Empate!");
     gameActive = false;
+    alert("Empate!");
+
     return;
   }
 
