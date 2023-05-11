@@ -17,17 +17,33 @@ const winningConditions = [
   [2, 4, 6]
 ];
 
+const startHumanVsHumanGame = () => {
+    playerXName = document.getElementById("playerX").value;
+    playerOName = document.getElementById("playerO").value;
+  
+    if (playerXName.trim() === "" || playerOName.trim() === "") {
+      alert("Por favor ingrese ambos nombres antes de comenzar");
+      return;
+    }
+  
+    currentPlayer = "X";
+    humanVsComputer = false;
+    gameActive = true;
+    resetBoardHuman();
+  };
+  
+
 const startHumanVsComputerGame = () => {
     playerXName = document.getElementById("playerX").value;
   
     if (playerXName.trim() === "") {
-      alert("Please enter the name for Player X before starting the game.");
+      alert("Ingrese un nombre para el jugador humano X");
       return;
     }
   
-    currentPlayer = prompt("Which player will have the 'X'? Enter 'X' or 'O'.").toUpperCase();
+    currentPlayer = prompt("Que jugador deberia comenzar? X jugador O computadora").toUpperCase();
     if (currentPlayer !== "X" && currentPlayer !== "O") {
-      alert("Please enter a valid choice ('X' or 'O') for the player with 'X'.");
+      alert("Ingrese una opcion valida ('X' o 'O') para el jugador que comienza.");
       return;
     }
   
@@ -50,18 +66,16 @@ const startHumanVsComputerGame = () => {
   
     if (checkWin()) {
       gameActive = false;
-      if (humanVsComputer && currentPlayer === "O") {
-        alert("Computer Wins!");
-      } else {
+     
         const currentPlayerName = currentPlayer === "X" ? playerXName : playerOName;
-        alert("Player " + currentPlayerName + " (" + currentPlayer + ") Wins!");
-      }
+        alert("Jugador " + currentPlayerName + " (" + currentPlayer + ") Gana!");
+      
       return;
     }
   
     if (checkTie()) {
       gameActive = false;
-      alert("Draw! It's a tie!");
+      alert("Es un empate!");
       return;
     }
   
@@ -95,10 +109,10 @@ const startHumanVsComputerGame = () => {
       if (checkWin()) {
         gameActive = false;
         if (humanVsComputer && currentPlayer === "O") {
-          alert("Computer Wins!");
+          alert("Gana la computadora!");
         } else {
           const currentPlayerName = currentPlayer === "X" ? playerXName : playerOName;
-          alert("Player " + currentPlayerName + " (" + currentPlayer + ") Wins!");
+          alert("Jugador " + currentPlayerName + " (" + currentPlayer + ") Gana!");
         }
         return;
       }
@@ -141,6 +155,19 @@ const resetBoard = () => {
   
     currentPlayer = "";
     gameActive = false;
+    gameState = ["", "", "", "", "", "", "", "", ""];
+  
+    const cells = document.getElementsByClassName("cell");
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].innerText = "";
+    }
+  };
+
+  const resetBoardHuman = () => {
+    
+  
+    currentPlayer = "";
+    gameActive = true;
     gameState = ["", "", "", "", "", "", "", "", ""];
   
     const cells = document.getElementsByClassName("cell");
