@@ -9,14 +9,15 @@
     <h1>TATETI</h1>
 
     <!-- Player name inputs -->
-    <label for="playerX">Jugador X:</label>
+    <label for="playerX">Player X:</label>
     <input type="text" id="playerX" placeholder="Enter name for Player X">
 
-    <label for="playerO">Jugador O:</label>
+    <label for="playerO">Player O:</label>
     <input type="text" id="playerO" placeholder="Enter name for Player O">
 
-    <!-- Start game button -->
-    <button onclick="startGame()">Comenzar con estos nombres</button>
+    <!-- Start game buttons -->
+    <button onclick="startHumanVsHumanGame()">Human vs Human</button>
+    <button onclick="startHumanVsComputerGame()">Human vs Computer</button>
 
     <div id="board">
       <div class="cell" onclick="ponerMarca(0)"></div>

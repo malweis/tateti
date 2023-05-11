@@ -1,12 +1,11 @@
-// Se setean las variablese globales de jugador activo, bandera de si el juego sigue activo y el estado actual del juego
 let currentPlayer = "";
 let gameActive = false;
 let playerXName = "";
 let playerOName = "";
+let humanVsComputer = false;
 
 
 let gameState = ["", "", "", "", "", "", "", "", ""];
-//Se setean las condiciones de victoria 
 const winningConditions = [
   [0, 1, 2],
   [3, 4, 5],
@@ -18,63 +17,106 @@ const winningConditions = [
   [2, 4, 6]
 ];
 
-const startGame = () => {
+const startHumanVsComputerGame = () => {
     playerXName = document.getElementById("playerX").value;
-    playerOName = document.getElementById("playerO").value;
   
-    if (playerXName.trim() === "" || playerOName.trim() === "") {
-      alert("Ingrese ambos nombres antes de comenzar.");
+    if (playerXName.trim() === "") {
+      alert("Please enter the name for Player X before starting the game.");
       return;
     }
   
-    currentPlayer = prompt("Cual jugador comienza con la X? X o O").toUpperCase();
+    currentPlayer = prompt("Which player will have the 'X'? Enter 'X' or 'O'.").toUpperCase();
     if (currentPlayer !== "X" && currentPlayer !== "O") {
-      alert("Ingrese  que jugador es primero");
+      alert("Please enter a valid choice ('X' or 'O') for the player with 'X'.");
       return;
     }
   
+    humanVsComputer = true;
     gameActive = true;
-    resetBoard();
+  
+    if (currentPlayer === "O") {
+      // If the computer plays first, make its move immediately
+      makeComputerMove();
+    }
   };
-
-//Cell index viene del html como un parametro
-const ponerMarca = (cellIndex) => {
-    //se comprueba que el juego aun no haya terminado o  que no haya ya un valor dentro de la celda
-  if (!gameActive || gameState[cellIndex] !== "") return;
-
-  playerXName = document.getElementById("playerX").value;
-  playerOName = document.getElementById("playerO").value;
-  //Se coloca al nombre del jugador actual en la posicion del array correspondiente a la celda clickeada
-  gameState[cellIndex] = currentPlayer;
-  //Se coloca el nombre del jugador en la celda clickeada
-  document.getElementsByClassName("cell")[cellIndex].innerText = currentPlayer;
-
- 
-
-  //Condicional que cambia al jugador cada vez que se coloca una marca , si es x pasa a o si no pasa a x
-  currentPlayer = currentPlayer === "X" ? "O" : "X";
-    currentPlayerName = currentPlayer === "X" ? playerXName : playerOName;
-     //Llama a la funcion para comprobar alguien gano el juego, de ser asi se imprime un mensaje y coloca el estado del juego en inactivo
-  if (checkWin()) {
-    
-    gameActive = false;
-    alert("Jugador " + currentPlayerName + " Gana!");
-    return;
-  }
-//Llama a la funcion para comprobar un empate, de ser asi se imprime un mensaje y coloca el estado del juego en inactivo
-  if (checkTie()) {
-    gameActive = false;
-    alert("Empate!");
-
-    return;
-  }
-};
-//Funcion a la que se llama cada vez que se coloca una marca para comprobar si un jugador gano
+  
+  
+  
+  const ponerMarca = (cellIndex) => {
+    if (!gameActive || gameState[cellIndex] !== "") return;
+  
+    gameState[cellIndex] = currentPlayer;
+    document.getElementsByClassName("cell")[cellIndex].innerText = currentPlayer;
+  
+    if (checkWin()) {
+      gameActive = false;
+      if (humanVsComputer && currentPlayer === "O") {
+        alert("Computer Wins!");
+      } else {
+        const currentPlayerName = currentPlayer === "X" ? playerXName : playerOName;
+        alert("Player " + currentPlayerName + " (" + currentPlayer + ") Wins!");
+      }
+      return;
+    }
+  
+    if (checkTie()) {
+      gameActive = false;
+      alert("Draw! It's a tie!");
+      return;
+    }
+  
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+  
+    if (humanVsComputer && currentPlayer === "O" && gameActive) {
+      // If playing against the computer and it's the computer's turn
+      setTimeout(makeComputerMove, 500);
+    }
+  };
+  
+  const makeComputerMove = () => {
+    // Generate a random index for the computer's move
+    let emptyCellIndices = [];
+    for (let i = 0; i < gameState.length; i++) {
+      if (gameState[i] === "") {
+        emptyCellIndices.push(i);
+      }
+    }
+  
+    // Check if there are any empty cells
+    if (emptyCellIndices.length > 0) {
+      // Select a random empty cell index
+      const randomIndex = Math.floor(Math.random() * emptyCellIndices.length);
+      const computerMoveIndex = emptyCellIndices[randomIndex];
+  
+      // Place the computer's mark
+      gameState[computerMoveIndex] = currentPlayer;
+      document.getElementsByClassName("cell")[computerMoveIndex].innerText = currentPlayer;
+  
+      if (checkWin()) {
+        gameActive = false;
+        if (humanVsComputer && currentPlayer === "O") {
+          alert("Computer Wins!");
+        } else {
+          const currentPlayerName = currentPlayer === "X" ? playerXName : playerOName;
+          alert("Player " + currentPlayerName + " (" + currentPlayer + ") Wins!");
+        }
+        return;
+      }
+  
+      if (checkTie()) {
+        gameActive = false;
+        alert("Draw! It's a tie!");
+        return;
+      }
+  
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+    }
+  };
+  
+  
 const checkWin = () => {
-    //Se itera  sobre el array de condiciones de victoria , se le asigna los valores en esa posicion a un array auxiliar para 
   for (let i = 0; i < winningConditions.length; i++) {
     const [a, b, c] = winningConditions[i];
-    //Si la posicion no esta vacia y esta tiene un contenido igual a las otras 2 posiciones de victoria se devulve verdadero, si no falso.
     if (
     
       gameState[a] !== "" &&
@@ -90,17 +132,15 @@ const checkWin = () => {
 // ...
 
   
-//Si el estado del juego no incluye ninguna cadena vacia se concluye empate
 const checkTie = () => {
   return !gameState.includes("");
 };
-//Se deja al tablero en su estado incial, reiniciando tambien las marcas colocadas
 const resetBoard = () => {
     playerXName = "";
     playerOName = "";
   
-    currentPlayer = "X";
-    gameActive = true;
+    currentPlayer = "";
+    gameActive = false;
     gameState = ["", "", "", "", "", "", "", "", ""];
   
     const cells = document.getElementsByClassName("cell");
@@ -108,5 +148,7 @@ const resetBoard = () => {
       cells[i].innerText = "";
     }
   };
+  
+  
   
 
